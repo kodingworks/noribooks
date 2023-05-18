@@ -1,0 +1,6 @@
+.form-input,
+.form-textarea {
+    &:focus {
+        @apply ring-0;
+    }
+}

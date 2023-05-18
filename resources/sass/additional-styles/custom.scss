@@ -1,0 +1,65 @@
+input,
+textarea,
+button,
+select,
+div,
+a {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  --tw-ring-shadow: 0 0 #000 !important;
+}
+
+:focus:not(:focus-visible) {
+  outline: 0;
+  box-shadow: none;
+}
+
+:focus,
+.focus-visible:focus:not(:focus-visible) {
+  outline: 0;
+  box-shadow: none;
+}
+
+// Multi select
+.multiselect-search{
+  border-radius: 4px !important;
+}
+
+.multiselect-tags-search{
+    padding-left: 0px !important;
+}
+
+.multiselect.is-active{
+    box-shadow: none !important;
+    border-color: rgb(59, 129, 246) !important;
+}
+
+:root {
+  --ms-radius: 4px;
+  --ms-tag-bg: rgb(59, 129, 246);
+  --ms-option-bg-selected: rgb(59, 129, 246);
+  --ms-option-bg-selected-pointed: rgb(59, 129, 246);
+  touch-action: pan-x pan-y;
+  height: 100% 
+}
+
+input[type=file]::file-selector-button {
+    border: 1px solid #4F8CF6;
+    padding: 8px 10px;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    background-color: #4F8CF6;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+input[type=file]::file-selector-button:hover {
+    background-color: #2464d1;
+    border: 1px solid #2464d1;
+}
+ 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
