@@ -16,19 +16,21 @@ class CategorySeeder extends Seeder
     {
         $datas = [
             [
-                'id' => 1,
+                'code'=>'102',
                 'name' => 'Kas & Bank'
             ],
             [
-                'id' => 2,
-                'name' => 'Akun Piutang'
+                'code'=>'201',
+                'name' => 'Persediaan'
             ],
         ];
 
-        foreach ($datas as $data) {
+        foreach ($datas as $key => $value) {
             try {
                 Category::create([
-                    'name' => $data['name']
+                    'id' => $key += 1,
+                    'code' => $value['code'],
+                    'name' => $value['name'],
                 ]);
             } catch (\Exception $exception) {
                 // Do something when the exception is thrown

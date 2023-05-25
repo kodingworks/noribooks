@@ -8,7 +8,7 @@ const props = defineProps({
 
 <template>
     <font-awesome-icon
-        icon="fa-solid fa-scale-balanced"
+        icon="fa-solid fa-gear"
         class="w-5 h-5 text-slate-400"
         :class="isActive && '!text-blue-500'"
     />

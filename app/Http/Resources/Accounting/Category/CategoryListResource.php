@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Accounting\Account;
+namespace App\Http\Resources\Accounting\Category;
 
-use Carbon\Carbon;
-use App\Services\FileService;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class AccountListResource extends ResourceCollection
+class CategoryListResource extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -20,7 +18,7 @@ class AccountListResource extends ResourceCollection
             'data' => $this->transformCollection($this->collection),
             'meta' => [
                 "success" => true,
-                "message" => "Success get account lists",
+                "message" => "Success get category lists",
                 'pagination' => $this->metaData()
             ]
         ];
@@ -28,17 +26,10 @@ class AccountListResource extends ResourceCollection
 
     private function transformData($data)
     {
-        $fileService = new FileService();
-
         return [
             'id' => $data->id,
-            'category_code' => $data->category->code,
+            'code' => $data->code,
             'name' => $data->name,
-            'category_id' => $data->category_id,
-            'category_name' => $data->category->name,
-            'type' => $data->type,
-            'description' => $data->description,
-            
         ];
     }
 

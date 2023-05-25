@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->integer('code');
+            $table->foreignId('category_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->string('name');
-            $table->foreignId('category_id')->constrained()->cascadeOnUpdate();
             $table->string('type');
             $table->string('description');
             $table->timestamps();

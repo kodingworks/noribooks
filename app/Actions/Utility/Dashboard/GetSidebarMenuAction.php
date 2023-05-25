@@ -10,12 +10,12 @@ class GetSidebarMenuAction
             [
                 'text' => 'Dashboard',
                 'url'  => route('dashboard.index'),
-                'icon' => 'VDashboard',
+                'icon' => 'VHome',
                 'can'  => 'view_general_dashboard'
             ],
             [
                 'text' => 'Accounting',
-                'icon' => 'VTag',
+                'icon' => 'VScale',
                 'group' => true,
                 // 'can'  => ['view_account', 'view_category'],
                 'submenu' => [
@@ -29,11 +29,16 @@ class GetSidebarMenuAction
                         'url'  => route('accounting.category.index'),
                         // 'can'  => 'view_category',
                     ],
+                    // [
+                    //     'text' => 'Journal',
+                    //     'url'  => route('accounting.journal.index'),
+                    //     // 'can'  => 'view_category',
+                    // ],
                 ],
             ],
             [
                 'text' => 'Settings',
-                'icon' => 'VSetting',
+                'icon' => 'VGear',
                 'group' => true,
                 'can'  => ['view_settings_role_management', 'view_settings_user_management'],
                 'submenu' => [

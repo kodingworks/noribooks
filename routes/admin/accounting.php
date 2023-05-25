@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Accounting\AccountController;
 use App\Http\Controllers\Accounting\CategoryController;
+use App\Http\Controllers\Accounting\JournalController;
 
 
 /*
@@ -32,4 +33,11 @@ Route::prefix('accounting')->name('accounting.')->group(function () {
         Route::post('{id}/update', 'updateData')->name('update');
         Route::delete('{id}/delete', 'deleteData')->name('delete');
     });
+    // Route::controller(JournalController::class)->prefix('journal')->name('journal.')->group(function () {
+    //     Route::get('/', 'index')->name('index');
+    //     Route::get('get-data', 'getData')->name('getdata');
+    //     Route::post('create', 'createData')->name('create');
+    //     Route::post('{id}/update', 'updateData')->name('update');
+    //     Route::delete('{id}/delete', 'deleteData')->name('delete');
+    // });
 });

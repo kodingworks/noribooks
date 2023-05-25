@@ -7,10 +7,16 @@ use App\Models\Category;
 
 class GetCategoryOptions
 {
+    public function codeHandle()
+    {
+        $categoryCode = Category::pluck('code',  'id');
+
+        return $categoryCode;
+    }
     public function handle()
     {
-        $category = Category::pluck('name', 'id');
+        $categoryName = Category::pluck('name',  'id');
 
-        return $category;
+        return $categoryName;
     }
 }

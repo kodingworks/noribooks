@@ -33,6 +33,11 @@ const breadcrumb = [
         to: route("dashboard.index"),
     },
     {
+        name: "Accounting",
+        active: false,
+        to: route("accounting.account.index"),
+    },
+    {
         name: "Category",
         active: true,
         to: route("accounting.category.index"),
@@ -64,7 +69,7 @@ const props = defineProps({
 
 const getData = debounce(async (page) => {
     axios
-        .get(route("category.getdata"), {
+        .get(route("accounting.category.getdata"), {
             params: {
                 page: page,
                 search: searchFilter.value,
@@ -142,7 +147,9 @@ const closeAlert = () => {
 
 const deleteHandle = async () => {
     axios
-        .delete(route("category.delete", { id: itemSelected.value.id }))
+        .delete(
+            route("accounting.category.delete", { id: itemSelected.value.id })
+        )
         .then((res) => {
             notify(
                 {
@@ -226,9 +233,9 @@ onMounted(() => {
                 </td>
             </tr>
             <tr v-for="(data, index) in query" :key="index" v-else>
-                <td class="px-4 whitespace-nowrap h-16">{{ data.name }}</td>
+                <td class="px-4 whitespace-nowrap h-16">{{ data.code }}</td>
                 <td class="px-4 whitespace-nowrap h-16">
-                    {{ data.description }}
+                    {{ data.name }}
                 </td>
                 <td class="px-4 whitespace-nowrap h-16 text-right">
                     <VDropdownEditMenu

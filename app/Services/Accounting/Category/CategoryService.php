@@ -21,7 +21,7 @@ class CategoryService
 
     public function createData($request)
     {
-        $inputs = $request->only(['name', 'description']);
+        $inputs = $request->only(['code','name' ]);
         $category = Category::create($inputs);
 
         return $category;
@@ -37,7 +37,7 @@ class CategoryService
 
     public function updateData($id, $request)
     {
-        $inputs = $request->only(['name', 'description']);
+        $inputs = $request->only(['code','name' ]);
         
         $category = Category::findOrFail($id);
         $category->update($inputs);
