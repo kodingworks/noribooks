@@ -5,6 +5,7 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
+import dayjs from "dayjs";
 import { notify } from "notiwind";
 import { object, string } from "vue-types";
 import { Head } from "@inertiajs/inertia-vue3";
@@ -18,15 +19,27 @@ import VBreadcrumb from "@/components/VBreadcrumb/index.vue";
 import VLoading from "@/components/VLoading/index.vue";
 import VEmpty from "@/components/src/icons/VEmpty.vue";
 import VButton from "@/components/VButton/index.vue";
+import VInput from "@/components/VInput/index.vue";
 import VAlert from "@/components/VAlert/index.vue";
 import VEdit from "@/components/src/icons/VEdit.vue";
 import VTrash from "@/components/src/icons/VTrash.vue";
 import VFilter from "./Filter.vue";
 import VModalForm from "./ModalForm.vue";
 
+// const props = defineProps({
+//     openDialog: bool(),
+//     updateAction: bool().def(false),
+//     data: object().def({}),
+//     additional: object().def({}),
+// });
+
+// const isLoading = ref(false);
+const formError = ref({});
+const form = ref({});
 const query = ref([]);
 const searchFilter = ref("");
 const filter = ref({});
+
 const breadcrumb = [
     {
         name: "Dashboard",
@@ -39,20 +52,14 @@ const breadcrumb = [
         to: route("accounting.journal.index"),
     },
     {
-        name: "Journals",
+        name: "Journal",
         active: true,
         to: route("accounting.journal.index"),
     },
-];
-
-const typeOptions = [
     {
-        label: "Debit",
-        value: "debit",
-    },
-    {
-        label: "Credit",
-        value: "credit",
+        name: "Journal Entry",
+        active: true,
+        to: route("accounting.journal.createPage"),
     },
 ];
 
@@ -87,7 +94,7 @@ const getData = debounce(async (page) => {
             params: {
                 page: page,
                 search: searchFilter.value,
-                filter_category: filter.value.filter_category,
+                // filter_journal: filter.value.filter_journal,
             },
         })
         .then((res) => {
@@ -106,10 +113,6 @@ const getData = debounce(async (page) => {
         })
         .finally(() => (isLoading.value = false));
 }, 500);
-
-const handleAddJournal = () => {
-    Inertia.visit(route("accounting.journal.createPage"));
-};
 
 const nextPaginate = () => {
     pagination.value.current_page += 1;
@@ -176,6 +179,13 @@ const closeAlert = () => {
     openAlert.value = false;
 };
 
+const handleDate = () => {
+    if (form.value.date) {
+        formError.value.date = "";
+        // form.value.date = dayjs(form.value.date).format("YYYY-MM-DD");
+    }
+};
+
 const deleteHandle = async () => {
     axios
         .delete(
@@ -215,110 +225,39 @@ onMounted(() => {
 
 <template>
     <Head :title="props.title" />
-    <VBreadcrumb :routes="breadcrumb" />
     <div class="mb-4 sm:mb-6 flex justify-between items-center">
         <h1 class="text-2xl md:text-3xl text-slate-800 font-bold">
-            Manual Journal
+            Journal Entry
         </h1>
     </div>
     <div
         class="bg-white shadow-lg rounded-sm border border-slate-200"
         :class="isLoading && 'min-h-[40vh] sm:min-h-[50vh]'"
     >
-        <header class="block justify-between items-center sm:flex py-6 px-4">
-            <h2 class="font-semibold text-slate-800">
-                All Journals
-                <span class="text-slate-400 !font-medium ml">{{
-                    pagination.total
-                }}</span>
-            </h2>
-            <div
-                class="mt-3 sm:mt-0 flex space-x-2 sm:justify-between justify-end"
-            >
-                <!-- Filter -->
-                <!-- <VFilter
-                    @search="searchHandle"
-                    @apply="applyFilter"
-                    @clear="clearFilter"
-                    :additional="additional"
-                /> -->
-                <VButton
-                    label="Add New Journal"
-                    type="primary"
-                    @click="handleAddJournal"
-                    class="mt-auto"
+        <div class="p-10 flex gap-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">
+                    Date<span class="text-rose-500"></span>
+                </label>
+                <Datepicker
+                    v-model="form.date"
+                    @update:modelValue="handleDate"
+                    :enableTimePicker="false"
+                    position="left"
+                    :clearable="false"
+                    format="dd MMMM yyyy"
+                    previewFormat="dd MMMM yyyy"
+                    placeholder="Date"
+                    :class="{ date_error: formError.date }"
                 />
             </div>
-        </header>
-
-        <VDataTable :heads="heads" :isLoading="isLoading">
-            <tr v-if="isLoading">
-                <td
-                    class="h-[100%] overflow-hidden my-2"
-                    :colspan="heads.length"
-                >
-                    <VLoading />
-                </td>
-            </tr>
-            <tr v-else-if="query.length === 0 && !isLoading">
-                <td class="overflow-hidden my-2" :colspan="heads.length">
-                    <div class="flex items-center flex-col w-full my-32">
-                        <VEmpty />
-                        <div
-                            class="mt-9 text-slate-500 text-xl md:text-xl font-medium"
-                        >
-                            Result not found.
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr v-for="(data, index) in query" :key="index" v-else>
-                <td class="px-4 whitespace-nowrap h-16">
-                    {{ data.date }}
-                </td>
-                <td class="px-4 whitespace-nowrap h-16">
-                    {{ data.amount }}
-                </td>
-                <td class="px-4 whitespace-nowrap h-16">
-                    {{ data.description }}
-                </td>
-                <td class="px-4 whitespace-nowrap h-16 text-right">
-                    <VDropdownEditMenu
-                        class="relative inline-flex r-0"
-                        :align="'right'"
-                        :last="index === query.length - 1 ? true : false"
-                    >
-                        <li
-                            class="cursor-pointer hover:bg-slate-100"
-                            @click="handleEditModal(data)"
-                        >
-                            <div class="flex items-center space-x-2 p-3">
-                                <span>
-                                    <VEdit color="primary" />
-                                </span>
-                                <span>Edit</span>
-                            </div>
-                        </li>
-                        <li class="cursor-pointer hover:bg-slate-100">
-                            <div
-                                class="flex justify-between items-center space-x-2 p-3"
-                                @click="alertDelete(data)"
-                            >
-                                <span>
-                                    <VTrash color="danger" />
-                                </span>
-                                <span>Delete</span>
-                            </div>
-                        </li>
-                    </VDropdownEditMenu>
-                </td>
-            </tr>
-        </VDataTable>
-        <div class="px-4 py-6">
-            <VPagination
-                :pagination="pagination"
-                @next="nextPaginate"
-                @previous="previousPaginate"
+            <VInput
+                placeholder="Description"
+                label="Description"
+                :required="true"
+                v-model="form.description"
+                :errorMessage="formError.description"
+                @update:modelValue="formError.description = ''"
             />
         </div>
     </div>

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('journals', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('journal_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->date('date');
             $table->string('description');
             $table->decimal('amount');

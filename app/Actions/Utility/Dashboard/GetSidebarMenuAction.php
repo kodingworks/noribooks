@@ -20,20 +20,20 @@ class GetSidebarMenuAction
                 // 'can'  => ['view_account', 'view_category'],
                 'submenu' => [
                     [
+                        'text' => 'Manual Journal',
+                        'url'  => route('accounting.journal.index'),
+                        // 'can'  => 'view_category',
+                    ],
+                    [
                         'text' => 'Chart of Accounts',
                         'url'  => route('accounting.account.index'),
                         // 'can'  => 'view_account',
                     ],
                     [
-                        'text' => 'Category',
+                        'text' => 'Account Categories',
                         'url'  => route('accounting.category.index'),
                         // 'can'  => 'view_category',
                     ],
-                    // [
-                    //     'text' => 'Journal',
-                    //     'url'  => route('accounting.journal.index'),
-                    //     // 'can'  => 'view_category',
-                    // ],
                 ],
             ],
             [

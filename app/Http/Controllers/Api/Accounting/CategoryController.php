@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Accounting\Category;
+namespace App\Http\Controllers\Api\Accounting;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiBaseController;

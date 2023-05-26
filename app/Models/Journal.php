@@ -10,4 +10,8 @@ class Journal extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function journal_entries() {
+        return $this->belongsTo(JournalEntries::class);
+    }
 }
