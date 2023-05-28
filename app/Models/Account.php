@@ -11,7 +11,13 @@ class Account extends Model
 
     protected $guarded = ['id'];
 
-    public function category() {
+    public function category()
+    {
         return $this->belongsTo(Category::class);
+    }
+
+    public function jorunal_entry()
+    {
+        return $this->hasMany(JorunalEntry::class);
     }
 }

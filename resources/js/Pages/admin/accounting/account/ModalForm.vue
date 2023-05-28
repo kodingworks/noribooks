@@ -203,27 +203,35 @@ const create = async (fd) => {
                         @update:modelValue="formError.category_id = ''"
                     />
                 </div>
-                <div class="col-span-2">
+                <div class="col-span-2 flex items-center">
                     <VSelect
-                        placeholder="Choose Code"
                         :required="true"
                         v-model="form.category_id"
                         :options="additional.category_list_code"
                         label="Code"
                         :errorMessage="formError.category_id"
                         @update:modelValue="formError.category_id = ''"
+                        :canClear="clearable"
+                        :canDeselect="clearable"
+                        class="w-1/4"
                     />
-                </div>
-                <!-- <div class="col-span-2">
                     <VInput
-                        placeholder="Insert Code"
-                        label="Code"
+                        placeholder="Input code"
                         :required="true"
-                        v-model="form.code"
-                        :errorMessage="formError.code"
-                        @update:modelValue="formError.code = ''"
+                        v-model="form.number"
+                        :errorMessage="formError.category_id"
+                        @update:modelValue="formError.category_id = ''"
+                        class="w-full mt-[26px]"
                     />
-                </div> -->
+                    <!-- <VInput
+                        placeholder="Insert Name"
+                        label="Name"
+                        :required="true"
+                        v-model="form.name"
+                        :errorMessage="formError.name"
+                        @update:modelValue="formError.name = ''"
+                    /> -->
+                </div>
                 <div class="col-span-2">
                     <VInput
                         placeholder="Insert Name"

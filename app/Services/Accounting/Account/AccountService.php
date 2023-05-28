@@ -25,19 +25,19 @@ class AccountService
             $q->where('category_id', $filter_category);
         });
 
-        if($sort_by_code){      
-            if($sort_by_code === 'asc'){
-                $result = $query->get()->sortBy('category_id');
-            }else{
-                $result = $query->get()->sortByDesc('category_id');
-            }
-            $paginate = new PaginateCollection();
-            $result = $paginate->handle($result, 10);
-        }else{
-            $result = $query->orderBy('id', 'desc')->paginate(10);
-        }
+        // if($sort_by_code){      
+        //     if($sort_by_code === 'asc'){
+        //         $result = $query->get()->sortBy('category_id');
+        //     }else{
+        //         $result = $query->get()->sortByDesc('category_id');
+        //     }
+        //     $paginate = new PaginateCollection();
+        //     $result = $paginate->handle($result, 10);
+        // }else{
+        //     $result = $query->orderBy('id', 'desc')->paginate(10);
+        // }
 
-        return $result;
+        return $query->paginate(10);
 
     }
 
@@ -48,7 +48,7 @@ class AccountService
         // $file = $fileService->uploadFile($request->file('image'));
 
         // Create the Account after that
-        $inputs = $request->only(['name', 'category_id', 'type', 'description']);
+        $inputs = $request->only(['name', 'number', 'category_id', 'type', 'description']);
         // $inputs['image'] = $file;
         $Account = Account::create($inputs);
 
@@ -76,7 +76,7 @@ class AccountService
         }
 
         // Update the Account data
-        $inputs = $request->only(['name', 'category_id', 'type', 'description']);
+        $inputs = $request->only(['name', 'number', 'category_id', 'type', 'description']);
         $inputs['image'] = $file;
         $Account->update($inputs);
 

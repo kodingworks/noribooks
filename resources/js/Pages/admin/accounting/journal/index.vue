@@ -9,6 +9,7 @@ import { notify } from "notiwind";
 import { object, string } from "vue-types";
 import { Head } from "@inertiajs/inertia-vue3";
 import { ref, onMounted, reactive } from "vue";
+import { Inertia } from "@inertiajs/inertia";
 import AppLayout from "@/layouts/apps.vue";
 import debounce from "@/composables/debounce";
 import VDropdownEditMenu from "@/components/VDropdownEditMenu/index.vue";
@@ -42,17 +43,6 @@ const breadcrumb = [
         name: "Journals",
         active: true,
         to: route("accounting.journal.index"),
-    },
-];
-
-const typeOptions = [
-    {
-        label: "Debit",
-        value: "debit",
-    },
-    {
-        label: "Credit",
-        value: "credit",
     },
 ];
 
@@ -277,10 +267,10 @@ onMounted(() => {
                     {{ data.date }}
                 </td>
                 <td class="px-4 whitespace-nowrap h-16">
-                    {{ data.amount }}
+                    {{ data.description }}
                 </td>
                 <td class="px-4 whitespace-nowrap h-16">
-                    {{ data.description }}
+                    Rp {{ data.amount_formatted }}
                 </td>
                 <td class="px-4 whitespace-nowrap h-16 text-right">
                     <VDropdownEditMenu

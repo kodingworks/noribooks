@@ -28,17 +28,16 @@ class AccountListResource extends ResourceCollection
 
     private function transformData($data)
     {
-        $fileService = new FileService();
 
         return [
             'id' => $data->id,
             'category_code' => $data->category->code,
             'name' => $data->name,
+            'number' => $data->number,
             'category_id' => $data->category_id,
             'category_name' => $data->category->name,
             'type' => $data->type,
             'description' => $data->description,
-            
         ];
     }
 

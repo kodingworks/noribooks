@@ -39,20 +39,9 @@ const breadcrumb = [
         to: route("accounting.account.index"),
     },
     {
-        name: "Account",
+        name: "Chart of Accounts",
         active: true,
         to: route("accounting.account.index"),
-    },
-];
-
-const typeOptions = [
-    {
-        label: "Debit",
-        value: "debit",
-    },
-    {
-        label: "Credit",
-        value: "credit",
     },
 ];
 
@@ -268,7 +257,7 @@ onMounted(() => {
             </tr>
             <tr v-for="(data, index) in query" :key="index" v-else>
                 <td class="px-4 whitespace-nowrap h-16">
-                    {{ data.category_code }}
+                    {{ data.category_code + data.number }}
                 </td>
                 <td class="px-4 whitespace-nowrap h-16">
                     {{ data.name }}

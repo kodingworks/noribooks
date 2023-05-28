@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('journal_entries', function (Blueprint $table) {
+        Schema::create('journals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('account_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->decimal('debit')->nullable();
-            $table->decimal('credit')->nullable();
-            $table->decimal('total_debit')->nullable();
-            $table->decimal('total_credit')->nullable();
+            $table->date('date');
+            $table->string('description');
+            $table->decimal('amount', 48,4);
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('journal_entries');
+        Schema::dropIfExists('journals');
     }
 };

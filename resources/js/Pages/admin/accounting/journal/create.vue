@@ -8,7 +8,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { notify } from "notiwind";
 import { object, string } from "vue-types";
-import { Head } from "@inertiajs/inertia-vue3";
+import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import { ref, onMounted, reactive } from "vue";
 import AppLayout from "@/layouts/apps.vue";
 import debounce from "@/composables/debounce";
@@ -21,47 +21,34 @@ import VEmpty from "@/components/src/icons/VEmpty.vue";
 import VButton from "@/components/VButton/index.vue";
 import VInput from "@/components/VInput/index.vue";
 import VAlert from "@/components/VAlert/index.vue";
+import VBack from "@/components/src/icons/VBack.vue";
 import VEdit from "@/components/src/icons/VEdit.vue";
 import VTrash from "@/components/src/icons/VTrash.vue";
 import VFilter from "./Filter.vue";
 import VModalForm from "./ModalForm.vue";
+import VSelect from "@/components/VSelect/index.vue";
 
-// const props = defineProps({
-//     openDialog: bool(),
-//     updateAction: bool().def(false),
-//     data: object().def({}),
-//     additional: object().def({}),
-// });
-
-// const isLoading = ref(false);
 const formError = ref({});
-const form = ref({});
 const query = ref([]);
 const searchFilter = ref("");
-const filter = ref({});
+const journalEntry = ref({ id: "" });
+const stopDelete = ref(true);
 
-const breadcrumb = [
+const form = ref({
+    date: "",
+    description: "",
+});
+
+const journalEntries = ref([
     {
-        name: "Dashboard",
-        active: false,
-        to: route("dashboard.index"),
+        account_id: "",
+        description: "",
+        debit: 0,
+        credit: 0,
+        total_debit: 0,
+        total_credit: 0,
     },
-    {
-        name: "Accounting",
-        active: true,
-        to: route("accounting.journal.index"),
-    },
-    {
-        name: "Journal",
-        active: true,
-        to: route("accounting.journal.index"),
-    },
-    {
-        name: "Journal Entry",
-        active: true,
-        to: route("accounting.journal.createPage"),
-    },
-];
+]);
 
 const pagination = ref({
     count: "",
@@ -70,108 +57,49 @@ const pagination = ref({
     total: 0,
     total_pages: 1,
 });
+
 const alertData = reactive({
     headerLabel: "",
     contentLabel: "",
     closeLabel: "",
     submitLabel: "",
 });
+
 const updateAction = ref(false);
 const itemSelected = ref({});
 const openAlert = ref(false);
 const openModalForm = ref(false);
-const heads = ["Date", "Description", "Amount", ""];
 const isLoading = ref(true);
+const backActive = ref(false);
+const heads = ["Account", "Description", "Debit", "Credit"];
 
 const props = defineProps({
     title: string(),
     additional: object(),
 });
 
-const getData = debounce(async (page) => {
-    axios
-        .get(route("accounting.journal.getdata"), {
-            params: {
-                page: page,
-                search: searchFilter.value,
-                // filter_journal: filter.value.filter_journal,
-            },
-        })
-        .then((res) => {
-            query.value = res.data.data;
-            pagination.value = res.data.meta.pagination;
-        })
-        .catch((res) => {
-            notify(
-                {
-                    type: "error",
-                    group: "top",
-                    text: res.response.data.message,
-                },
-                2500
-            );
-        })
-        .finally(() => (isLoading.value = false));
-}, 500);
-
-const nextPaginate = () => {
-    pagination.value.current_page += 1;
-    isLoading.value = true;
-    getData(pagination.value.current_page);
+const handleDebitInput = () => {
+    if (journalEntries.value.credit !== "") {
+        journalEntries.value.credit = "";
+    }
 };
 
-const previousPaginate = () => {
-    pagination.value.current_page -= 1;
-    isLoading.value = true;
-    getData(pagination.value.current_page);
+const handleCreditInput = () => {
+    if (journalEntries.value.debit !== "") {
+        journalEntries.value.debit = "";
+    }
 };
 
-const searchHandle = (search) => {
-    searchFilter.value = search;
-    isLoading.value = true;
-    getData(1);
-};
-
-const applyFilter = (data) => {
-    filter.value = data;
-    isLoading.value = true;
-    getData(1);
-};
-
-const clearFilter = (data) => {
-    filter.value = data;
-    isLoading.value = true;
-    getData(1);
-};
-
-const handleAddModalForm = () => {
-    updateAction.value = false;
-    openModalForm.value = true;
-};
-
-const handleEditModal = (data) => {
-    updateAction.value = true;
-    itemSelected.value = data;
-    openModalForm.value = true;
-};
-
-const successSubmit = () => {
-    isLoading.value = true;
-    getData(pagination.value.current_page);
-};
-
-const closeModalForm = () => {
-    itemSelected.value = ref({});
-    openModalForm.value = false;
-};
-
-const alertDelete = (data) => {
-    itemSelected.value = data;
-    openAlert.value = true;
-    alertData.headerLabel = "Are you sure to delete this?";
-    alertData.contentLabel = "You won't be able to revert this!";
-    alertData.closeLabel = "Cancel";
-    alertData.submitLabel = "Delete";
+const handleAddAnotherJournal = () => {
+    stopDelete.value = false;
+    journalEntries.value.push({
+        account_id: "",
+        description: "",
+        debit: 0,
+        credit: 0,
+        total_debit: 0,
+        total_credit: 0,
+    });
 };
 
 const closeAlert = () => {
@@ -182,8 +110,15 @@ const closeAlert = () => {
 const handleDate = () => {
     if (form.value.date) {
         formError.value.date = "";
-        // form.value.date = dayjs(form.value.date).format("YYYY-MM-DD");
+        form.value.date = dayjs(form.value.date).format("YYYY-MM-DD");
     }
+};
+
+const handleDeleteJournal = (index) => {
+    journalEntries.value.splice(index, 1);
+    journalEntries.value.length <= 1
+        ? (stopDelete.value = true)
+        : (stopDelete.value = false);
 };
 
 const deleteHandle = async () => {
@@ -218,23 +153,84 @@ const deleteHandle = async () => {
         });
 };
 
-onMounted(() => {
-    getData(1);
-});
+const submit = () => {
+    let total_debit = 0;
+    let total_credit = 0;
+    journalEntries.value.map((journal) => {
+        (total_debit += journal.total_debit),
+            (total_credit += journal.total_credit);
+    });
+    const data = {
+        account_id: +form.account,
+        journal_entries: journalEntries.value,
+        total_debit: total_debit,
+        total_credit: total_credit,
+    };
+
+    console.log(data);
+    axios
+        .post(route("accounting.journal.store"), data)
+        .then((res) => {
+            form.reset();
+            journalEntries.value = [
+                {
+                    account_id: "",
+                    description: "",
+                    debit: 0,
+                    credit: 0,
+                    total_debit: 0,
+                    total_credit: 0,
+                },
+            ];
+            notify(
+                {
+                    type: "success",
+                    group: "top",
+                    text: res.data.message,
+                },
+                2500
+            );
+        })
+        .catch((res) => {
+            console.log(res.response.data);
+            notify(
+                {
+                    type: "error",
+                    group: "top",
+                    text: res.response.data.meta,
+                },
+                2500
+            );
+        });
+};
 </script>
 
 <template>
     <Head :title="props.title" />
     <div class="mb-4 sm:mb-6 flex justify-between items-center">
-        <h1 class="text-2xl md:text-3xl text-slate-800 font-bold">
-            Journal Entry
-        </h1>
+        <div class="flex items-center">
+            <Link
+                :href="route('accounting.journal.index')"
+                class="cursor-pointer"
+            >
+                <VBack
+                    width="32"
+                    height="32"
+                    :is-active="backActive"
+                    @mouseover="backActive = true"
+                    @mouseout="backActive = false"
+                />
+            </Link>
+            <h1 class="text-2xl md:text-3xl text-slate-800 font-bold">
+                Journal Entry
+            </h1>
+        </div>
     </div>
     <div
         class="bg-white shadow-lg rounded-sm border border-slate-200"
         :class="isLoading && 'min-h-[40vh] sm:min-h-[50vh]'"
     >
-        <div class="p-10 flex gap-4">
+        <section class="px-10 py-6 flex gap-4">
             <div>
                 <label class="block text-sm font-medium text-slate-600 mb-1">
                     Date<span class="text-rose-500"></span>
@@ -248,35 +244,100 @@ onMounted(() => {
                     format="dd MMMM yyyy"
                     previewFormat="dd MMMM yyyy"
                     placeholder="Date"
-                    :class="{ date_error: formError.date }"
                 />
             </div>
             <VInput
                 placeholder="Description"
                 label="Description"
-                :required="true"
                 v-model="form.description"
                 :errorMessage="formError.description"
                 @update:modelValue="formError.description = ''"
             />
-        </div>
+            <!-- <VInput
+                placeholder="Amount"
+                label="Amount"
+                v-model="form.amount"
+                :errorMessage="formError.amount"
+                @update:modelValue="formError.amount = ''"
+            /> -->
+        </section>
+        <section class="px-7">
+            <VDataTable :heads="heads">
+                <tr v-for="(journal, index) in journalEntries" :key="index">
+                    <td class="w-1/3">
+                        <VSelect
+                            placeholder="Choose Account"
+                            v-model="journalEntries[index].account_id"
+                            :options="additional.account_list"
+                            :errorMessage="formError.account_id"
+                            @update:modelValue="formError.account_id = ''"
+                            class="w-full"
+                        />
+                    </td>
+                    <td class="w-1/3">
+                        <VInput
+                            placeholder="Description"
+                            v-model="journalEntries[index].description"
+                            :errorMessage="formError.description"
+                            @update:modelValue="formError.description = ''"
+                        />
+                    </td>
+                    <td>
+                        <VInput
+                            v-model="journalEntries[index].debit"
+                            :errorMessage="formError.debit"
+                            @input="handleDebitInput"
+                            @update:modelValue="formError.debit = ''"
+                        />
+                    </td>
+                    <td>
+                        <VInput
+                            v-model="journalEntries[index].credit"
+                            :errorMessage="formError.credit"
+                            @input="handleCreditInput"
+                            @update:modelValue="formError.credit = ''"
+                        />
+                    </td>
+                    <td class="cursor-pointer whitespace-nowrap text-right">
+                        <div
+                            class="flex justify-between items-center space-x-2 p-3"
+                            @click="handleDeleteJournal(index)"
+                        >
+                            <span>
+                                <VTrash color="danger" />
+                            </span>
+                        </div>
+                    </td>
+                    <!-- <VSelect
+                            placeholder="Account Name"
+                            label="Select Account Name"
+                            :required="true"
+                            v-model="journalEntries[index].account_id"
+                            :options="additional.account_list"
+                            /> -->
+                </tr>
+            </VDataTable>
+            <div class="py-5 px-3">
+                <VButton
+                    label="Add line"
+                    type="primary"
+                    @click="handleAddAnotherJournal"
+                    class="mt-auto"
+                />
+            </div>
+        </section>
+        <footer>
+            <div class="flex flex-col px-6 py-3 border-slate-200">
+                <div class="flex self-end space-x-3">
+                    <!-- <VButton
+                        :is-loading="isLoading"
+                        label="Discard"
+                        type="default"
+                        @click="discard"
+                    /> -->
+                    <VButton label="Save" type="primary" @click="submit" />
+                </div>
+            </div>
+        </footer>
     </div>
-    <VAlert
-        :open-dialog="openAlert"
-        @closeAlert="closeAlert"
-        @submitAlert="deleteHandle"
-        type="danger"
-        :headerLabel="alertData.headerLabel"
-        :content-label="alertData.contentLabel"
-        :close-label="alertData.closeLabel"
-        :submit-label="alertData.submitLabel"
-    />
-    <!-- <VModalForm
-        :data="itemSelected"
-        :update-action="updateAction"
-        :open-dialog="openModalForm"
-        @close="closeModalForm"
-        @successSubmit="successSubmit"
-        :additional="additional"
-    /> -->
 </template>

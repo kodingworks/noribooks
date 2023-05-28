@@ -5,14 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Journal extends Model
+class JournalEntry extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function journal_entry()
+    protected $casts = [
+        'journal_entry' => 'array'
+    ];
+
+    public function journal()
     {
-        return $this->hasMany(JournalEntry::class);
+        return $this->belongsTo(Journal::class);
     }
 }

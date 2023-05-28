@@ -16,11 +16,11 @@ class CategorySeeder extends Seeder
     {
         $datas = [
             [
-                'code'=>'102',
+                'code'=>'1-10',
                 'name' => 'Kas & Bank'
             ],
             [
-                'code'=>'201',
+                'code'=>'1-10',
                 'name' => 'Persediaan'
             ],
         ];
