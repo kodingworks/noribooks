@@ -33,6 +33,7 @@ const query = ref([]);
 const searchFilter = ref("");
 const journalEntry = ref({ id: "" });
 const stopDelete = ref(true);
+const amount = ref(0);
 
 const form = ref({
     date: "",
@@ -45,8 +46,6 @@ const journalEntries = ref([
         description: "",
         debit: 0,
         credit: 0,
-        total_debit: 0,
-        total_credit: 0,
     },
 ]);
 
@@ -78,17 +77,31 @@ const props = defineProps({
     additional: object(),
 });
 
-const handleDebitInput = () => {
-    if (journalEntries.value.credit !== "") {
-        journalEntries.value.credit = "";
-    }
-};
+// const getData = debounce(async () => {
+//     axios.get(route('accounting.journal.getdata'))
+//     .then((res) => {
+//         query.value = res.data.data
+//         amount.value = res.data.amount
+//     }).catch((res) => {
+//         notify({
+//             type: "error",
+//             group: "top",
+//             text: res.response.data.message
+//         }, 2500)
+//     }).finally(() => cartLoading.value = false)
+// }, 500);
 
-const handleCreditInput = () => {
-    if (journalEntries.value.debit !== "") {
-        journalEntries.value.debit = "";
-    }
-};
+// const handleDebitInput = () => {
+//     if (journalEntries.value.credit !== "") {
+//         journalEntries.value.credit = "";
+//     }
+// };
+
+// const handleCreditInput = () => {
+//     if (journalEntries.value.debit !== "") {
+//         journalEntries.value.debit = "";
+//     }
+// };
 
 const handleAddAnotherJournal = () => {
     stopDelete.value = false;
@@ -97,8 +110,6 @@ const handleAddAnotherJournal = () => {
         description: "",
         debit: 0,
         credit: 0,
-        total_debit: 0,
-        total_credit: 0,
     });
 };
 
@@ -154,15 +165,24 @@ const deleteHandle = async () => {
 };
 
 const submit = () => {
+    // let amount = 0;
     let total_debit = 0;
     let total_credit = 0;
     journalEntries.value.map((journal) => {
-        (total_debit += journal.total_debit),
-            (total_credit += journal.total_credit);
+        total_debit += journal.debit;
+        total_credit += journal.credit;
+
+        if (total_debit === total_credit) {
+            amount.value += total_debit;
+        } else {
+            amount.value = 0;
+        }
     });
     const data = {
-        account_id: +form.account,
+        date: form.value.date,
+        description: form.value.description,
         journal_entries: journalEntries.value,
+        amount: +amount.value,
         total_debit: total_debit,
         total_credit: total_credit,
     };
@@ -178,8 +198,6 @@ const submit = () => {
                     description: "",
                     debit: 0,
                     credit: 0,
-                    total_debit: 0,
-                    total_credit: 0,
                 },
             ];
             notify(
@@ -202,6 +220,18 @@ const submit = () => {
                 2500
             );
         });
+};
+
+const handleAmount = (index) => {
+    try {
+        let totalDebit = 0;
+        let totalCredit = 0;
+        totalDebit += journalEntries.value[index].debit;
+        totalCredit += journalEntries.value[index].credit;
+    } catch (e) {
+        totalDebit = 0;
+        totalCredit = 0;
+    }
 };
 </script>
 
@@ -278,24 +308,20 @@ const submit = () => {
                         <VInput
                             placeholder="Description"
                             v-model="journalEntries[index].description"
-                            :errorMessage="formError.description"
-                            @update:modelValue="formError.description = ''"
                         />
                     </td>
                     <td>
-                        <VInput
+                        <input
                             v-model="journalEntries[index].debit"
-                            :errorMessage="formError.debit"
-                            @input="handleDebitInput"
-                            @update:modelValue="formError.debit = ''"
+                            class="leading-5 border-slate-200 shadow-sm placeholder-slate-400 rounded text-sm text-slate-800 bg-white border w-full focus:ring-0"
+                            type="number"
                         />
                     </td>
                     <td>
-                        <VInput
+                        <input
                             v-model="journalEntries[index].credit"
-                            :errorMessage="formError.credit"
-                            @input="handleCreditInput"
-                            @update:modelValue="formError.credit = ''"
+                            type="number"
+                            class="leading-5 border-slate-200 shadow-sm placeholder-slate-400 rounded text-sm text-slate-800 bg-white border w-full focus:ring-0"
                         />
                     </td>
                     <td class="cursor-pointer whitespace-nowrap text-right">
