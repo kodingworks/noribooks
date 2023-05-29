@@ -5,7 +5,7 @@
 
 ---
 
-![image]()
+![Noribooks screenshot](https://github.com/davinzaki/accounting-app/assets/101463185/e8f46ae7-1dd2-4775-a71f-b61ccd1842a8)
 
 ## Features
 
