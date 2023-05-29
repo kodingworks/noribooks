@@ -11,9 +11,6 @@ class JournalEntry extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'journal_entry' => 'array'
-    ];
 
     public function journal()
     {
