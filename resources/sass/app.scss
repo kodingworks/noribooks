@@ -1,0 +1,13 @@
+// TailwindCss
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+// Additional styles
+@import "additional-styles/utility-patterns.scss";
+@import "additional-styles/theme.scss";
+@import "additional-styles/custom.scss";
+@import "additional-styles/toggle-switch.scss";
+@import "@vueform/multiselect/themes/default.css";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=fallback');
